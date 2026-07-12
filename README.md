@@ -281,8 +281,12 @@ or add offensive capabilities will not be accepted.
 
 ## 📄 License
 
-**EDUCATIONAL USE ONLY** - See [DISCLAIMER](#-legal-disclaimer).
+Copyright (c) 2025 **Adam-ZS** — https://github.com/Adam-ZS
+
+**EDUCATIONAL USE ONLY** — See [LICENSE](LICENSE) for full terms.
+
+Unauthorized access to computer systems is illegal. You must have explicit written permission before testing any system you do not own.
 
 ---
 
-*Built with 🦉 by security researchers for authorized testing and education.*
+*Built with 🦉 by [Adam-ZS](https://github.com/Adam-ZS) for authorized testing and education.*
