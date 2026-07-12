@@ -8,6 +8,7 @@
    ██║   ██║  ██║███████╗    ██║ ╚████║╚██████╔╝╚██████╗   ██║   ╚██████╔╝██║  ██║
    ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚═╝  ╚═══╝ ╚═════╝  ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
 ```
+*Copyright (c) 2025 Adam-ZS — https://github.com/Adam-ZS*
 
 [![Platform](https://img.shields.io/badge/platform-Windows%20x64-blue)]()
 [![Agent](https://img.shields.io/badge/lang-C%2B%2B11-purple)]()
