@@ -94,6 +94,11 @@
                     │  GET  /api/data          │
                     └─────────────────────────┘
 ```
+> **Architecture Diagram:**
+> ![NOCTUA Architecture](screenshots/architecture.png)
+>
+> **Dashboard Preview:**
+> ![NOCTUA Dashboard](screenshots/dashboard.png)
 
 ---
 
