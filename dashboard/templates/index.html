@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOCTUA Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="logo">
+                <span class="logo-icon">🦉</span>
+                <div class="logo-text">
+                    <h1>NOCTUA</h1>
+                    <span class="logo-subtitle">Credential Intelligence</span>
+                </div>
+            </div>
+            
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-dot"></span>
+                <span class="status-text">Connected</span>
+            </div>
+            
+            <div class="stats" id="statsPanel">
+                <h3>Statistics</h3>
+                <div class="stat-card">
+                    <span class="stat-label">Total Credentials</span>
+                    <span class="stat-value" id="statTotal">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Browsers</span>
+                    <span class="stat-value cyan" id="statBrowser">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">WiFi Networks</span>
+                    <span class="stat-value green" id="statWifi">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">RDP Sessions</span>
+                    <span class="stat-value orange" id="statRdp">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Telegram</span>
+                    <span class="stat-value purple" id="statTelegram">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Computers</span>
+                    <span class="stat-value" id="statComputers">0</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-actions">
+                <button class="btn btn-danger" id="btnClearAll" onclick="clearAll()">
+                    <span class="btn-icon">🗑️</span> Clear All
+                </button>
+                <button class="btn btn-secondary" onclick="exportJSON()">
+                    <span class="btn-icon">📥</span> Export JSON
+                </button>
+                <button class="btn btn-secondary" onclick="exportCSV()">
+                    <span class="btn-icon">📄</span> Export CSV
+                </button>
+            </div>
+            
+            <div class="sidebar-footer">
+                <span>NOCTUA v1.0.0</span>
+                <span class="dot"></span>
+                <span id="pollStatus">Auto-polling 3s</span>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header glass">
+                <div class="header-left">
+                    <h2>Captured Credentials</h2>
+                    <span class="badge" id="badgeCount">0</span>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search credentials..." oninput="onSearch()">
+                    </div>
+                    <div class="filter-group">
+                        <select id="filterTarget" onchange="onFilterChange()">
+                            <option value="">All Targets</option>
+                            <option value="Chrome">Chrome</option>
+                            <option value="Edge">Edge</option>
+                            <option value="Brave">Brave</option>
+                            <option value="Opera">Opera</option>
+                            <option value="Vivaldi">Vivaldi</option>
+                            <option value="WiFi">WiFi</option>
+                            <option value="RDP">RDP</option>
+                            <option value="Telegram">Telegram</option>
+                        </select>
+                        <select id="filterCategory" onchange="onFilterChange()">
+                            <option value="">All Categories</option>
+                            <option value="browser">Browser</option>
+                            <option value="wifi">WiFi</option>
+                            <option value="rdp">RDP</option>
+                            <option value="telegram">Telegram</option>
+                            <option value="cookie">Cookie</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <span class="btn-icon">🔄</span> Refresh
+                    </button>
+                </div>
+            </header>
+            
+            <div class="table-container glass">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner"></div>
+                    <span>Loading credentials...</span>
+                </div>
+                <div class="table-toolbar">
+                    <span id="resultCount">0 results</span>
+                    <div class="toolbar-actions">
+                        <button class="btn btn-sm" onclick="copyAllVisible()" title="Copy all visible">
+                            📋 Copy All
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteVisible()" title="Delete visible">
+                            🗑️ Delete Visible
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="credentialsTable">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="target">Target</th>
+                                <th class="sortable" data-sort="username">Username</th>
+                                <th class="sortable" data-sort="password">Password</th>
+                                <th class="sortable" data-sort="url">URL / Network</th>
+                                <th>Notes</th>
+                                <th class="sortable" data-sort="computer_name">Computer</th>
+                                <th class="sortable" data-sort="timestamp">Timestamp</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr class="empty-row">
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <span class="empty-icon">🦉</span>
+                                        <p>No credentials collected yet</p>
+                                        <p class="empty-sub">Deploy the NOCTUA agent to start harvesting</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-footer">
+                    <span id="paginationInfo"></span>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Toast notification -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Confirmation modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3>Confirm Action</h3>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirmBtn" onclick="executeConfirm()">Confirm</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

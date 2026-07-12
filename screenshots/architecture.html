@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOCTUA Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e8e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #00d4ff, #80deea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: #606078;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+        
+        .architecture {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        
+        .box {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px 28px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            min-width: 160px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .box:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.1);
+        }
+        
+        .box .icon {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .box .label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e8e8f0;
+        }
+        
+        .box .desc {
+            font-size: 11px;
+            color: #606078;
+            margin-top: 4px;
+        }
+        
+        .box.accent {
+            border-color: rgba(0, 212, 255, 0.2);
+            background: rgba(0, 212, 255, 0.06);
+        }
+        
+        .box.collector {
+            border-color: rgba(179, 136, 255, 0.2);
+            background: rgba(179, 136, 255, 0.06);
+        }
+        
+        .box.wifi-type {
+            border-color: rgba(0, 230, 118, 0.15);
+            background: rgba(0, 230, 118, 0.05);
+        }
+        
+        .box.rdp-type {
+            border-color: rgba(255, 109, 0, 0.15);
+            background: rgba(255, 109, 0, 0.05);
+        }
+        
+        .box.telegram-type {
+            border-color: rgba(179, 136, 255, 0.15);
+            background: rgba(179, 136, 255, 0.05);
+        }
+        
+        .box.chrome-type {
+            border-color: rgba(0, 212, 255, 0.15);
+            background: rgba(0, 212, 255, 0.04);
+        }
+        
+        .arrow {
+            color: #00d4ff;
+            font-size: 28px;
+            opacity: 0.6;
+            line-height: 1;
+            padding: 4px 0;
+        }
+        
+        .arrow-down {
+            display: block;
+            text-align: center;
+            color: #00d4ff;
+            font-size: 28px;
+            opacity: 0.4;
+            line-height: 1;
+            margin: 4px 0;
+        }
+        
+        .section-label {
+            color: #606078;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 16px 0 8px;
+            text-align: center;
+        }
+        
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+            margin: 8px 0;
+        }
+        
+        .target-system {
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 8px 0;
+            width: 100%;
+            position: relative;
+        }
+        
+        .target-system::before {
+            content: '🔴 TARGET SYSTEM';
+            position: absolute;
+            top: -10px;
+            left: 24px;
+            background: #0a0a0f;
+            padding: 0 12px;
+            font-size: 10px;
+            color: #ff3355;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        
+        .c2-system {
+            border: 1px dashed rgba(0, 212, 255, 0.15);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 8px 0;
+            width: 100%;
+            position: relative;
+        }
+        
+        .c2-system::before {
+            content: '🟢 C2 SERVER';
+            position: absolute;
+            top: -10px;
+            left: 24px;
+            background: #0a0a0f;
+            padding: 0 12px;
+            font-size: 10px;
+            color: #00e676;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        
+        .exfil-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin: 4px 0;
+        }
+        
+        .exfil-method {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .exfil-method.http {
+            background: rgba(0, 212, 255, 0.12);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .exfil-method.dns {
+            background: rgba(179, 136, 255, 0.12);
+            color: #b388ff;
+            border: 1px solid rgba(179, 136, 255, 0.2);
+        }
+        
+        .exfil-method.file {
+            background: rgba(255, 171, 0, 0.12);
+            color: #ffab00;
+            border: 1px solid rgba(255, 171, 0, 0.2);
+        }
+        
+        .footer {
+            margin-top: 40px;
+            color: #404058;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>🦉 NOCTUA Architecture</h1>
+    <p class="subtitle">Credential Intelligence Framework — System Overview</p>
+    
+    <div class="architecture">
+        <!-- Target System -->
+        <div class="target-system">
+            <div class="section-label">📥 Collectors</div>
+            <div class="row">
+                <div class="box chrome-type">
+                    <span class="icon">🌐</span>
+                    <span class="label">Browser Dumper</span>
+                    <span class="desc">Chrome / Edge / Brave<br>Opera / Vivaldi</span>
+                </div>
+                <div class="box wifi-type">
+                    <span class="icon">📡</span>
+                    <span class="label">WiFi Dumper</span>
+                    <span class="desc">WLAN API<br>WlanGetProfile</span>
+                </div>
+                <div class="box rdp-type">
+                    <span class="icon">🖥️</span>
+                    <span class="label">RDP Dumper</span>
+                    <span class="desc">Credential Manager<br>.rdp Files</span>
+                </div>
+                <div class="box telegram-type">
+                    <span class="icon">💬</span>
+                    <span class="label">Telegram Dumper</span>
+                    <span class="desc">tdata / authkey<br>Maps / Users</span>
+                </div>
+            </div>
+            
+            <span class="arrow-down">▼</span>
+            
+            <div class="row">
+                <div class="box collector accent">
+                    <span class="icon">⚙️</span>
+                    <span class="label">NOCTUA Agent</span>
+                    <span class="desc">WinMain · Anti-debug · XOR obfuscation<br>Multi-threaded · Staggered delays</span>
+                </div>
+            </div>
+            
+            <span class="arrow-down">▼</span>
+            
+            <div class="section-label">📤 Exfiltration</div>
+            <div class="exfil-row">
+                <span class="exfil-method http">HTTP POST</span>
+                <span style="color:#404058">·</span>
+                <span class="exfil-method dns">DNS TXT</span>
+                <span style="color:#404058">·</span>
+                <span class="exfil-method file">File (hidden)</span>
+            </div>
+        </div>
+        
+        <!-- Arrow connecting systems -->
+        <div style="display:flex; flex-direction:column; align-items:center; margin:12px 0;">
+            <span class="arrow">⬇</span>
+            <span style="color:#404058; font-size:11px;">JSON via HTTP POST</span>
+            <span class="arrow">⬇</span>
+        </div>
+        
+        <!-- C2 Server -->
+        <div class="c2-system">
+            <div class="row">
+                <div class="box accent">
+                    <span class="icon">🖥️</span>
+                    <span class="label">Flask Dashboard</span>
+                    <span class="desc">Python 3 · SQLite · REST API<br>POST /api/collect</span>
+                </div>
+            </div>
+            
+            <span class="arrow-down">▼</span>
+            
+            <div class="section-label">📊 Data Views</div>
+            <div class="row">
+                <div class="box">
+                    <span class="icon">📋</span>
+                    <span class="label">Credentials Table</span>
+                    <span class="desc">Search · Filter · Sort</span>
+                </div>
+                <div class="box">
+                    <span class="icon">📊</span>
+                    <span class="label">Statistics</span>
+                    <span class="desc">Categories · Counts</span>
+                </div>
+                <div class="box">
+                    <span class="icon">📥</span>
+                    <span class="label">Export</span>
+                    <span class="desc">JSON · CSV</span>
+                </div>
+                <div class="box">
+                    <span class="icon">🔍</span>
+                    <span class="label">Real-time Polling</span>
+                    <span class="desc">Auto-refresh 3s</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        NOCTUA v1.0.0 · Agent (C++ x64) → Dashboard (Flask) · Glassmorphism Dark UI
+    </div>
+</body>
+</html>
